@@ -17,18 +17,15 @@ background = pygame.transform.scale(background, (screen_width, screen_height))
 
 # Creating the Samurai sprite
 moving_sprites = pygame.sprite.Group()
-player = Samurai(100, 400)  # Place Samurai near the center of the screen
-player.image = pygame.transform.scale(player.image, (player.image.get_width() * 3, player.image.get_height() * 3))  # Scale the sprite 3x
+player = Samurai(100, 300)  # Place Samurai near the center of the screen
 moving_sprites.add(player)
 
-# Main game loop
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-        # Check for key press
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_z:  # Attack 1
                 player.set_attack(1)
@@ -36,6 +33,21 @@ while True:
                 player.set_attack(2)
             elif event.key == pygame.K_c:  # Attack 3
                 player.set_attack(3)
+            elif event.key == pygame.K_SPACE:  # Jump
+                player.jump()
+
+        if event.type == pygame.KEYUP:
+            if event.key in [pygame.K_a, pygame.K_d]:  # Stop running
+                player.stop_running()
+
+    # Check for continuous movement with held keys
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_a]:  # Run left
+        player.run("left")
+    elif keys[pygame.K_d]:  # Run right
+        player.run("right")
+    else:
+        player.stop_running()  # Stop running if neither A nor D is pressed
 
     # Draw everything
     screen.blit(background, (0, 0))  # Draw the background first
@@ -43,3 +55,4 @@ while True:
     moving_sprites.update()          # Update the sprite animations
     pygame.display.flip()
     clock.tick(60)
+
